@@ -1,21 +1,31 @@
 #include <stdio.h>
-#include <cs50.h>
+#include "cs50.h"
 
 // l algo prototype
-void luhns_algo(long card_num);
+bool luhns_algo(long card_num);
 // card info prototype
 long user_card_num(void);
+// card company name prototype
+void print_card_company(bool res, long card_num);
 
 int main(void)
 {
     // get the users card number
     long card_num = user_card_num();
 
-    // TEMP: check for every other num (from left to right)
-    luhns_algo(card_num);
+    // checks for car sum of 20 through the algo
+    bool algo_passes = luhns_algo(card_num);
+
+    // output card type depending on algo res
+    if (algo_passes)
+    {
+        print_card_company(algo_passes, card_num);
+    } else {
+	printf("INVALID\n");
+    }
 }
 
-void luhns_algo(long card_num)
+bool luhns_algo(long card_num)
 {
     // initialize the mod to find the nums
     long curr_div = 1;
@@ -34,6 +44,12 @@ void luhns_algo(long card_num)
         // if the cur pos mod 2 is == 0
         if (pos % 2 == 0)
         {
+	    // current card num
+	    int curr_num = (((card_num / curr_div) % 10));
+
+	    // increment curr card sum by cur num
+	    card_sum += curr_num;
+
             // increment the curr pos
             pos += 1;
             
@@ -44,10 +60,33 @@ void luhns_algo(long card_num)
             continue;
         } else if (pos % 2 > 0) {
             
-            printf("card num: %li, curr div: %li\n", ((card_num / curr_div) % 10), curr_div);
+             // printf("card num: %li, curr div: %li\n", ((card_num / curr_div) % 10), curr_div);
 
-            // increment the curr card sum by the curr num * 2
-            card_sum += (((card_num / curr_div) % 10) * 2);
+	    // calculate the current card number
+	    int curr_num = (((card_num / curr_div) % 10) * 2);
+	    
+	    // if the current number is greater
+	    // than 9 (more than 1 digit)
+	    if (curr_num > 9)
+	    {
+	        // curr multiplied num
+	        // curr_num
+
+	        // num 2
+	        //curr_num % 10
+
+	        // num 1
+	        //curr_num / 10
+
+	        // increment curr sum by num 1
+	        card_sum += (curr_num / 10);
+
+	        // increment cur sum by num 2
+	        card_sum += (curr_num % 10);
+	    } else {
+	        // increment the curr card sum by the curr num * 2
+	        card_sum += curr_num;
+	    }
 
             // increment the curr pos
             pos += 1;
@@ -57,8 +96,16 @@ void luhns_algo(long card_num)
         }
     }
 
-    printf("card sum: %i\n", card_sum);
+    // return out true if sum is 20
+    if (card_sum == 20)
+    {
+	return true;
+    } else { // return out false otherwise
+	return false;
+    }
 
+    // outputs card sum
+    // printf("card sum: %i\n", card_sum);
 }
 
 long user_card_num(void)
@@ -75,4 +122,24 @@ long user_card_num(void)
 
     // return out the user card num
     return card_num;
+}
+
+void print_card_company(bool res, long card_num)
+{
+    // AMEX will be single digit
+
+    // VISA and MASTERCARD will be double digits
+
+    // initialize the first digits (will be
+    // either single or double digits
+    int first_digs = card_num / 100000000000000;
+
+    // if the variable is less than 10 and
+    // greater than 0 ( single digit )
+    if (first_digs > 0 && first_digs < 10)
+    {
+        // re-initialize the first digits
+        first_digs = card_num / 10000000000000;
+        printf("first digits: %i\n", first_digs);
+    }
 }
